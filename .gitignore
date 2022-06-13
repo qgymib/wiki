@@ -1,4 +1,15 @@
+# Ignore MacOS auto generated folder
 .DS_Store
+
+# Ignore Windows thumbnails
 Thumbs.db
+
+# Ignore nodejs modules
 node_modules/
 
+# Ignore tiddlywiki build output files
+/output
+
+# Always ignore some tiddlywiki informations
+/tiddlers/$__Import.tid
+/tiddlers/$__StoryList.tid
