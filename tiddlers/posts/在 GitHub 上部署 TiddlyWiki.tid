@@ -1,0 +1,95 @@
+created: 20220613101614847
+modified: 20220613105610835
+tags: 
+title: 在 GitHub 上部署 TiddlyWiki
+type: text/vnd.tiddlywiki
+
+! 目标
+
+通过此文章，你将达成如下目标：
+
+# 所有的 wiki 内容均存储在 GitHub 中
+# 可通过 GitHub Pages 在任何地方访问你的 TiddlyWiki 页面
+
+! GitHub 步骤
+
+# 在 GitHub 中创建一个空白 Repo，比如 `qgymib/wiki`
+
+# 将 Repo Clone 到本地
+
+# 在 Repo 中执行如下指令：<div>
+
+```
+npm install -s tiddlywiki
+```
+</div>
+
+# 新建 `.gitignore` 文件并写入如下内容：<div>
+
+```
+# Ignore MacOS auto generated folder
+.DS_Store
+
+# Ignore Windows thumbnails
+Thumbs.db
+
+# Ignore nodejs modules
+node_modules/
+
+# Ignore tiddlywiki build output files
+/wiki/output
+
+# Always ignore import informations
+/wiki/tiddlers/$__Import.tid
+```
+</div>
+
+# 新建 `.github/workflows/deploy.yml` 文件并写入如下内容：<div>
+
+```
+name: deploy
+
+on:
+  push:
+    branches: [ "master" ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+
+      - name: Setup TiddlyWiki
+        run: npm install
+
+      - name: Build static files
+        run: npx tiddlywiki wiki --build
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./wiki/output
+          force_orphan: true
+```
+</div>
+
+# 将上述内容提交上传至 GitHub
+
+! 注意事项
+
+# `$__StoryList.tid` 文件的内容应总是保持为：<div>
+
+```
+list: GettingStarted
+title: $:/StoryList
+```
+</div>
+
+# `$__Import.tid` 应总是被忽略
