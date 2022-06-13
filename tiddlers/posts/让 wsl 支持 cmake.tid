@@ -1,0 +1,24 @@
+created: 20211103233841000
+modified: 20211103233841000
+tags: 
+title: 让 wsl 支持 cmake
+type: text/vnd.tiddlywiki
+
+来源：[[Every call to configure_file fails on WSL: configure_file Problem configuring file|https://stackoverflow.com/questions/62879479/every-call-to-configure-file-fails-on-wsl-configure-file-problem-configuring-fi]]
+
+# Create a file named wsl.conf in /etc/ with the following text:<div>
+
+```
+# /etc/wsl.conf
+[automount]
+options = "metadata"
+enabled = true
+```
+</div>
+
+# Reboot wsl:<div>
+
+```
+wsl.exe -t Ubuntu // (or other e.g. Debian)
+```
+</div>
