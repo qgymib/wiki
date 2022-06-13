@@ -1,0 +1,11 @@
+created: 20210820202852382
+modified: 20210820202852382
+tags: 
+title: lede 开启 hello world
+type: text/vnd.tiddlywiki
+
+编辑 `feeds.conf.default` 文件，在最末尾加上：
+
+```
+src-git helloworld https://github.com/fw876/helloworld
+```
