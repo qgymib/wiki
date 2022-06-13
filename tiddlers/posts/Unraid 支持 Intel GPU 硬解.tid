@@ -1,0 +1,17 @@
+created: 20210210225050000
+modified: 20210210225050000
+tags: 
+title: Unraid 支持 Intel GPU 硬解
+type: text/vnd.tiddlywiki
+
+编辑 `go` 文件，添加 `modprobe i915`，使其内容如下：
+
+```bash
+#!/bin/bash
+
+# Intel GPU
+modprobe i915
+
+# Start the Management Utility
+/usr/local/sbin/emhttp &
+```
