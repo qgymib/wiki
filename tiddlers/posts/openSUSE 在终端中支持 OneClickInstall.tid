@@ -1,0 +1,19 @@
+created: 20210929225832000
+modified: 20210929225832000
+tags: 
+title: openSUSE 在终端中支持 OneClickInstall
+type: text/vnd.tiddlywiki
+
+openSUSE 中关于 OneClickInstall 的 [[FAQ|https://en.opensuse.org/openSUSE:One_Click_Install_UserFAQ]] 目前是过期的，`/sbin/OCICLI` 已经不再提供。
+
+! 安装
+
+```bash
+sudo zypper install yast2-metapackage-handler
+```
+
+! 使用
+
+```bash
+OneClickInstallCLI <YMP URL>
+```
