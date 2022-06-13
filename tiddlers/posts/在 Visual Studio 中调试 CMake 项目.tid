@@ -1,0 +1,7 @@
+created: 20211202145850000
+modified: 20211202145850000
+tags: 
+title: 在 Visual Studio 中调试 CMake 项目
+type: text/vnd.tiddlywiki
+
+[[Configure CMake debugging sessions|https://docs.microsoft.com/en-us/cpp/build/configure-cmake-debugging-sessions?view=msvc-170]]
