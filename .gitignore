@@ -13,3 +13,7 @@ node_modules/
 # Always ignore some tiddlywiki informations
 /tiddlers/$__Import.tid
 /tiddlers/$__StoryList.tid
+
+# drawio backup and temporary files
+*.drawio.bkp
+*.drawio.dtmp
