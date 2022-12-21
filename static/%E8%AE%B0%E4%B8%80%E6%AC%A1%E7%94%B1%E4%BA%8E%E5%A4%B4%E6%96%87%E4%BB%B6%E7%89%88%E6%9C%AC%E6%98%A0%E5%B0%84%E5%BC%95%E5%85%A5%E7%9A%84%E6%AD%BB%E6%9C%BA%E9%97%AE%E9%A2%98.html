@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="generator" content="TiddlyWiki" />
+<meta name="tiddlywiki-version" content="5.2.5" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="format-detection" content="telephone=no">
+<link id="faviconLink" rel="shortcut icon" href="favicon.ico">
+<link rel="stylesheet" href="static.css">
+<title>记一次由于头文件版本映射引入的死机问题: 我的 ~TiddlyWiki — 卡片式个人网页笔记</title>
+</head>
+<body class="tc-body">
+
+<section class="tc-story-river tc-static-story-river">
+<p><div class="tc-tiddler-frame tc-tiddler-view-frame tc-tiddler-exists " data-tags="" data-tiddler-title="记一次由于头文件版本映射引入的死机问题" role="article"><div class="tc-tiddler-title"><div class="tc-titlebar"><span class="tc-tiddler-controls"><button aria-expanded="false" aria-label="更多" class="tc-btn-invisible tc-btn-%24%3A%2Fcore%2Fui%2FButtons%2Fmore-tiddler-actions" title="更多操作"></button><div class=" tc-reveal" hidden="true"></div><button aria-expanded="false" aria-label="Page TOC" class="tc-btn-invisible tc-btn-%24%3A%2Fplugins%2FGk0Wk%2Fpage-toc%2FPageTOCButton" title="Show TOC of this tiddler"></button><div class="tc-popup-keep tc-reveal" hidden="true"></div><button aria-label="编辑" class="tc-btn-invisible tc-btn-%24%3A%2Fcore%2Fui%2FButtons%2Fedit" title="编辑此条目"></button><button aria-label="关闭" class="tc-btn-invisible tc-btn-%24%3A%2Fcore%2Fui%2FButtons%2Fclose" title="关闭此条目"></button></span><span><h2 class="tc-title">记一次由于头文件版本映射引入的死机问题</h2></span></div><div class="tc-tiddler-info tc-popup-handle tc-reveal" hidden="true"></div></div><div class="tc-reveal"></div><div class=" tc-reveal"><div class="tc-subtitle"><a class="tc-tiddlylink tc-tiddlylink-missing" href=".html"></a> 2021年08月16日 08:37</div></div><div class=" tc-reveal"><div class="tc-tags-wrapper"></div></div><div class="tc-tiddler-body tc-reveal"><p>蜂鸟平台基线项目中出现了极其偶发性的死机问题，本文章回溯了整个问题的排查过程。</p><h1 class="">时间线</h1><ul><li>2021-06-29 测试团队发现蜂鸟设备清配置重启过程中偶现性的死机，问题单提为严重级别</li><li>2021-06-30 蜂鸟团队投入分析<ul><li>经过一个月的自动化测试，复现了若干次问题，但是一直未找到提升问题复现概率的方法以及问题根因</li><li>期间与产品线沟通，产品线经过4000次自动化测试，均未复现问题，认为是一个轻微级别的问题</li></ul></li><li>2021-08-12 蜂鸟团队进行下一轮测试的转测工作</li><li>2021-08-13 转测过程中发现智能相关业务也存在死机问题</li><li>死机现象类似</li><li>高概率出现</li><li>问题解决</li></ul><h1 class="">过程分析</h1><h2 class="">死机堆栈</h2><p>死机的堆栈十分稳定，出现在下述代码中的第16行，即对 <code>msg</code> 解引用的时候：</p><pre class="hljs"><code class="c hljs"><span class="hljs-comment">// msg 是承载了消息内容的一个对象</span>
+
+uint64 t1 = aeda_timeGetCurrentMillSecond();
+<span class="hljs-keyword">switch</span> (msg-&gt;type)
+{
+    <span class="hljs-comment">// 此处依据消息内容，回调给用户进行处理</span>
+}
+<span class="hljs-type">uint64_t</span> t2 = aeda_timeGetCurrentMilliSecond();
+
+<span class="hljs-comment">/************************************************************************/</span>
+<span class="hljs-comment">/* 处理超时时显示告警                                                    */</span>
+<span class="hljs-comment">/************************************************************************/</span>
+<span class="hljs-type">uint64_t</span> timeDiff = t2 - t1;
+<span class="hljs-keyword">if</span> (timeDiff &gt; aeda_softbus_timeout)
+{
+	<span class="hljs-keyword">switch</span> (msg-&gt;type)  <span class="hljs-comment">// 此处发生死机，值为NULL</span>
+	{
+        <span class="hljs-comment">// 打印告警信息</span>
+	}
+}</code></pre><h1 class="">现象推导</h1><p>从上述堆栈中我们可以获取到几个信息：</p><ol><li>问题原因必定为内存被踩。这是由于在上述代码的第4行同样对 <code>msg</code> 发生了解引用，但是未出现死机。这说明在第4行的时候， <code>msg</code> 这个变量所包含的值还是正常的；但是到了第16行解引用却发生了死机，说明变量值被意外改变，而这两者之间进行了用户回调。</li><li>不太可能是由于多线程引起的内存被踩。这是由于多线程运行过程往往是不稳定的。如果是由于多线程问题内存被踩，那么死机堆栈应该会变化才对。而此处的多次复现均发现堆栈相同。</li><li>可能是由于栈被踩导致的死机。与上一点类似，由于死机堆栈十分稳定，且此变量为栈上的变量，因此大概率是栈被踩。</li></ol><p>从上述现象我们还能进一步推导栈是如何被踩的。</p><p>依据 <a class="tc-tiddlylink tc-tiddlylink-resolves" href="Procedure%2520Call%2520Standard.html">Procedure Call Standard</a> 可以知道 <code>ARM32</code> 下栈默认情况下是向下生长的（借用一下x86的图，AAPCS里面没画）：</p><pre><code>direction of     |                                 |
+  growth of      +---------------------------------+ 
+   stack         | Parameters passed by fn1(caller)|
+from higher addr.|                                 |
+to lower addr.   | Direction of growth is opposite |
+      |          |   to direction of stack growth  |
+      |          +---------------------------------+ &lt;-- SP on entry to fn2
+      |          | Return address from fn2(callee) | 
+      V          +---------------------------------+ 
+                 | Callee saved registers being    | 
+                 |   used in the callee function   | 
+                 +---------------------------------+
+                 | Local variables of fn2          |
+                 |(Direction of growth of frame is |
+                 | same as direction of growth of  |
+                 |            stack)               |
+                 +---------------------------------+ 
+                 | Arguments to functions called   |
+                 | by fn2                          |
+                 +---------------------------------+ &lt;- Current SP after stack 
+                                                        frame is allocated</code></pre><p>由于栈向下生长，而 <code>msg</code> 这个变量位于用户栈的高地址处，因此被踩原因必然不是因为栈溢出。这是因为栈溢出必定是向低地址踩，如果是由于栈溢出引起的，则必然是相对高地址处的另一个线程的栈溢出引起的，这就涉及到了2个线程。而前面提到过，此处稳定的死机堆栈不像是多线程引起的内存问题。</p><p>对于上一级栈的破坏主要是由于对于栈上变量的越界写引起的。举个例子，我们在栈上有一个数组：</p><pre class="hljs"><code class="c hljs"><span class="hljs-type">void</span> <span class="hljs-title function_">foo</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span>
+{
+    <span class="hljs-type">int</span> arr[<span class="hljs-number">8</span>];
+}</code></pre><p>则数组的首位 <code>arr[0]</code> 处于低地址，数组的末尾 <code>arr[7]</code> 处于高地址。对应到栈上就是：</p><pre><code>STACK_TOP --&gt; STACK_BOTTOM
+LOW_ADD   --&gt;    HIGH_ADDR
+arr[0]    ...       arr[7]</code></pre><p>因此，如果我们对变量 <code>arr</code> 向后越界写入，就会造成对上一级堆栈的破坏。</p><h1 class="">过程验证</h1><p>上述推导在第一次死机的时候即可推导出来，但是由于问题现象极其偶现，无法找到具体位置。后续智能相关业务的高概率死机给了我们解决的希望。</p><p>智能死机所呈现的堆栈与前述一致，其主要提供了一些场外信息：</p><ol><li>由于高概率死机，我们可以对问题引入版本进行二分查找</li><li>通过二分查找，发现问题引入版本在 <code>08/05</code> 与 <code>08/10</code> 之间</li><li>产品线对应程序无问题，蜂鸟基线对应程序有问题</li><li>从代码上看，产品线对应程序在这两个版本之间仅存在一处改动</li><li>将此改动同步到基线，仍然出现死机问题</li></ol><p>至此，其实问题的唯一原因已经明确：
+在保持双方代码一致、依赖库版本一致的情况下，仍然出现栈越界写入死机，则应是头文件不匹配导致的问题。</p><p>这是因为我们可以有如下推导：</p><ol><li>代码保持一致，则代码逻辑应是正确的</li><li>问题分析导向为栈溢出</li><li>所集成的库是多个，通过映射方式指向同一份头文件，有存在版本不一致的可能</li></ol></div>
+</div></p>
+</section>
+</body>
+</html>
+

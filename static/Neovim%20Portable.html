@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="generator" content="TiddlyWiki" />
+<meta name="tiddlywiki-version" content="5.2.5" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="format-detection" content="telephone=no">
+<link id="faviconLink" rel="shortcut icon" href="favicon.ico">
+<link rel="stylesheet" href="static.css">
+<title>Neovim Portable: 我的 ~TiddlyWiki — 卡片式个人网页笔记</title>
+</head>
+<body class="tc-body">
+
+<section class="tc-story-river tc-static-story-river">
+<p><div class="tc-tiddler-frame tc-tiddler-view-frame tc-tiddler-exists " data-tags="" data-tiddler-title="Neovim Portable" role="article"><div class="tc-tiddler-title"><div class="tc-titlebar"><span class="tc-tiddler-controls"><button aria-expanded="false" aria-label="更多" class="tc-btn-invisible tc-btn-%24%3A%2Fcore%2Fui%2FButtons%2Fmore-tiddler-actions" title="更多操作"></button><div class=" tc-reveal" hidden="true"></div><button aria-expanded="false" aria-label="Page TOC" class="tc-btn-invisible tc-btn-%24%3A%2Fplugins%2FGk0Wk%2Fpage-toc%2FPageTOCButton" title="Show TOC of this tiddler"></button><div class="tc-popup-keep tc-reveal" hidden="true"></div><button aria-label="编辑" class="tc-btn-invisible tc-btn-%24%3A%2Fcore%2Fui%2FButtons%2Fedit" title="编辑此条目"></button><button aria-label="关闭" class="tc-btn-invisible tc-btn-%24%3A%2Fcore%2Fui%2FButtons%2Fclose" title="关闭此条目"></button></span><span><h2 class="tc-title">Neovim Portable</h2></span></div><div class="tc-tiddler-info tc-popup-handle tc-reveal" hidden="true"></div></div><div class="tc-reveal"></div><div class=" tc-reveal"><div class="tc-subtitle"><a class="tc-tiddlylink tc-tiddlylink-missing" href=".html"></a> 2021年08月18日 11:57</div></div><div class=" tc-reveal"><div class="tc-tags-wrapper"></div></div><div class="tc-tiddler-body tc-reveal"><p>符合 <code>PortableApps.com</code> 格式的 <a class="tc-tiddlylink-external" href="https://github.com/neovim/neovim" rel="noopener noreferrer" target="_blank">NeoVim</a> 封装配置。</p><h1 class="">NeovimPortable.ini</h1><pre class="hljs"><code class="ini hljs"><span class="hljs-section">[Launch]</span>
+<span class="hljs-attr">ProgramExecutable</span>=Neovim\bin\nvim-qt.exe
+<span class="hljs-attr">DirectoryMoveOK</span>=<span class="hljs-literal">yes</span>
+<span class="hljs-attr">SupportsUNC</span>=<span class="hljs-literal">yes</span>
+
+<span class="hljs-section">[Activate]</span>
+<span class="hljs-attr">Registry</span>=<span class="hljs-literal">true</span>
+<span class="hljs-attr">XML</span>=<span class="hljs-literal">true</span>
+
+<span class="hljs-section">[Environment]</span>
+<span class="hljs-attr">XDG_CONFIG_HOME</span>=%PAL:DataDir%
+<span class="hljs-attr">XDG_DATA_HOME</span>=%PAL:DataDir%
+<span class="hljs-attr">NEOVIM_HOME</span>=%PAL:AppDir%\Neovim
+<span class="hljs-attr">HOME</span>=%PAL:DataDir%
+<span class="hljs-attr">PATH</span>=%NEOVIM_HOME%\bin<span class="hljs-comment">;%PATH%</span>
+<span class="hljs-comment">; for spacevim</span>
+<span class="hljs-attr">PYTHON3_HOST_PROG</span>=%PYTHON3_HOME%\python.exe
+
+<span class="hljs-section">[RegistryKeys]</span>
+<span class="hljs-attr">nvim-qt</span>=HKCU\Software\nvim-qt
+
+<span class="hljs-section">[FileWrite1]</span>
+<span class="hljs-attr">Type</span>=Replace
+<span class="hljs-attr">File</span>=%PAL:DataDir%\nvim-data\rplugin.vim
+<span class="hljs-attr">Find</span>=%PAL:LastDrive:ForwardSlash%%PAL:LastPackagePartialDir:ForwardSlash%
+<span class="hljs-attr">Replace</span>=%PAL:Drive:ForwardSlash%%PAL:PackagePartialDir:ForwardSlash%</code></pre><h1 class="">添加 Python3 支持</h1><ol><li>下载embed版本的python3（<a class="tc-tiddlylink-external" href="https://www.python.org/ftp/python/3.9.6/python-3.9.6-embed-amd64.zip" rel="noopener noreferrer" target="_blank">我使用的版本</a>），解压至 <code>/App/Tools/python-3.9.6</code> 目录</li><li><code>NeovimPortable.ini</code> 中添加环境变量 <code>PYTHON3_HOME=%PAL:AppDir%\Tools\python-3.9.6</code></li><li><code>NeovimPortable.ini</code> 中追加 <code>PATH</code>: <code>%PYTHON3_HOME%;%PYTHON3_HOME%\Scripts</code></li><li>编辑文件 <code>python39._pth</code>，添加一行 <code>Lib</code>，并去除 <code>#import site</code> 前的注释，使其内容类似如下：<div><pre><code>python39.zip
+Lib
+.
+
+# Uncomment to run site.main() automatically
+import site</code></pre></div></li><li>下载 <a class="tc-tiddlylink-external" href="https://pip.pypa.io/en/stable/installation/" rel="noopener noreferrer" target="_blank">get-pip.py</a> 放入 <code>%PYTHON3_HOME%</code>，并在此目录下执行 <code>.\python .\get-pip.py</code></li><li>打开 NeovimPortable，在终端中执行 <code>pip install pynvim</code></li></ol><h1 class="">添加 nodejs 支持</h1><ol><li>下载 <code>zip</code> 格式的nodejs并放入 <code>App/Tools</code> 目录</li><li>编辑 <code>NeovimPortable.ini</code> 并添加环境变量 <code>%PAL:AppDir%/Tools/node</code></li><li>在 NeovimPortable 终端中执行 <code>npm install -g neovim</code></li><li>在 NeovimPortable 终端中执行 <code>npm install -g yarn</code></li></ol></div>
+</div></p>
+</section>
+</body>
+</html>
+

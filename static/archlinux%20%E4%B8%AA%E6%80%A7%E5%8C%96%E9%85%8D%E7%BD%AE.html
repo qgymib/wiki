@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="generator" content="TiddlyWiki" />
+<meta name="tiddlywiki-version" content="5.2.5" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="format-detection" content="telephone=no">
+<link id="faviconLink" rel="shortcut icon" href="favicon.ico">
+<link rel="stylesheet" href="static.css">
+<title>archlinux 个性化配置: 我的 ~TiddlyWiki — 卡片式个人网页笔记</title>
+</head>
+<body class="tc-body">
+
+<section class="tc-story-river tc-static-story-river">
+<p><div class="tc-tiddler-frame tc-tiddler-view-frame tc-tiddler-exists " data-tags="" data-tiddler-title="archlinux 个性化配置" role="article"><div class="tc-tiddler-title"><div class="tc-titlebar"><span class="tc-tiddler-controls"><button aria-expanded="false" aria-label="更多" class="tc-btn-invisible tc-btn-%24%3A%2Fcore%2Fui%2FButtons%2Fmore-tiddler-actions" title="更多操作"></button><div class=" tc-reveal" hidden="true"></div><button aria-expanded="false" aria-label="Page TOC" class="tc-btn-invisible tc-btn-%24%3A%2Fplugins%2FGk0Wk%2Fpage-toc%2FPageTOCButton" title="Show TOC of this tiddler"></button><div class="tc-popup-keep tc-reveal" hidden="true"></div><button aria-label="编辑" class="tc-btn-invisible tc-btn-%24%3A%2Fcore%2Fui%2FButtons%2Fedit" title="编辑此条目"></button><button aria-label="关闭" class="tc-btn-invisible tc-btn-%24%3A%2Fcore%2Fui%2FButtons%2Fclose" title="关闭此条目"></button></span><span><h2 class="tc-title">archlinux 个性化配置</h2></span></div><div class="tc-tiddler-info tc-popup-handle tc-reveal" hidden="true"></div></div><div class="tc-reveal"></div><div class=" tc-reveal"><div class="tc-subtitle"><a class="tc-tiddlylink tc-tiddlylink-missing" href=".html"></a> 2022年04月22日 09:31</div></div><div class=" tc-reveal"><div class="tc-tags-wrapper"></div></div><div class="tc-tiddler-body tc-reveal"><h1 class="">安装</h1><p><a class="tc-tiddlylink-external" href="https://wiki.archlinux.org/title/Installation_guide" rel="noopener noreferrer" target="_blank">Installation guide</a></p><p>或</p><p><a class="tc-tiddlylink-external" href="https://mags.zone/arch-usb.html" rel="noopener noreferrer" target="_blank">Arch Linux USB</a></p><h1 class="">通用配置</h1><p><a class="tc-tiddlylink-external" href="https://wiki.archlinux.org/title/General_recommendations" rel="noopener noreferrer" target="_blank">General recommendations</a></p><ul><li>添加用户</li><li>安装 Xorg / Xfce / lightdm<div><pre><code># pacman -S xorg-server \
+    plasma-meta kde-system-meta kde-utilities-meta \
+    xfce4 xfce4-goodies alacarte \
+    lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings
+
+# systemctl enable lightdm.service &amp;&amp; systemctl start lightdm.service</code></pre></div></li></ul><h1 class="">AUR &amp;&amp; archlinuxcn</h1><p><a class="tc-tiddlylink-external" href="https://www.archlinuxcn.org/archlinux-cn-repo-and-mirror/" rel="noopener noreferrer" target="_blank">Arch Linux 中文社区仓库</a></p><p>镜像：</p><pre><code>## 清华大学 (北京) (ipv4, ipv6, http, https)
+[archlinuxcn]
+Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch</code></pre><pre><code># pacman -Syy &amp;&amp; pacman -S yay</code></pre><h1 class="">中文化</h1><p><a class="tc-tiddlylink-external" href="https://wiki.archlinux.org/title/Localization_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)/Simplified_Chinese_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)" rel="noopener noreferrer" target="_blank">Localization (简体中文)/Simplified Chinese (简体中文)</a></p></div>
+</div></p>
+</section>
+</body>
+</html>
+

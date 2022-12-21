@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="generator" content="TiddlyWiki" />
+<meta name="tiddlywiki-version" content="5.2.5" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="format-detection" content="telephone=no">
+<link id="faviconLink" rel="shortcut icon" href="favicon.ico">
+<link rel="stylesheet" href="static.css">
+<title>在 GitHub 上部署 TiddlyWiki: 我的 ~TiddlyWiki — 卡片式个人网页笔记</title>
+</head>
+<body class="tc-body">
+
+<section class="tc-story-river tc-static-story-river">
+<p><div class="tc-tiddler-frame tc-tiddler-view-frame tc-tiddler-exists " data-tags="" data-tiddler-title="在 GitHub 上部署 TiddlyWiki" role="article"><div class="tc-tiddler-title"><div class="tc-titlebar"><span class="tc-tiddler-controls"><button aria-expanded="false" aria-label="更多" class="tc-btn-invisible tc-btn-%24%3A%2Fcore%2Fui%2FButtons%2Fmore-tiddler-actions" title="更多操作"></button><div class=" tc-reveal" hidden="true"></div><button aria-expanded="false" aria-label="Page TOC" class="tc-btn-invisible tc-btn-%24%3A%2Fplugins%2FGk0Wk%2Fpage-toc%2FPageTOCButton" title="Show TOC of this tiddler"></button><div class="tc-popup-keep tc-reveal" hidden="true"></div><button aria-label="编辑" class="tc-btn-invisible tc-btn-%24%3A%2Fcore%2Fui%2FButtons%2Fedit" title="编辑此条目"></button><button aria-label="关闭" class="tc-btn-invisible tc-btn-%24%3A%2Fcore%2Fui%2FButtons%2Fclose" title="关闭此条目"></button></span><span><h2 class="tc-title">在 GitHub 上部署 TiddlyWiki</h2></span></div><div class="tc-tiddler-info tc-popup-handle tc-reveal" hidden="true"></div></div><div class="tc-reveal"></div><div class=" tc-reveal"><div class="tc-subtitle"><a class="tc-tiddlylink tc-tiddlylink-missing" href=".html"></a> 2022年06月13日 10:56</div></div><div class=" tc-reveal"><div class="tc-tags-wrapper"></div></div><div class="tc-tiddler-body tc-reveal"><h1 class="">目标</h1><p>通过此文章，你将达成如下目标：</p><ol><li>所有的 wiki 内容均存储在 GitHub 中</li><li>可通过 GitHub Pages 在任何地方访问你的 TiddlyWiki 页面</li></ol><h1 class="">GitHub 步骤</h1><ol><li>在 GitHub 中创建一个空白 Repo，比如 <code>qgymib/wiki</code></li><li>将 Repo Clone 到本地</li><li>在 Repo 中执行如下指令：<div><pre><code>npm install -s tiddlywiki</code></pre></div></li><li>新建 <code>.gitignore</code> 文件并写入如下内容：<div><pre><code># Ignore MacOS auto generated folder
+.DS_Store
+
+# Ignore Windows thumbnails
+Thumbs.db
+
+# Ignore nodejs modules
+node_modules/
+
+# Ignore tiddlywiki build output files
+/wiki/output
+
+# Always ignore import informations
+/wiki/tiddlers/$__Import.tid</code></pre></div></li><li>新建 <code>.github/workflows/deploy.yml</code> 文件并写入如下内容：<div><pre><code>name: deploy
+
+on:
+  push:
+    branches: [ "master" ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+
+      - name: Setup TiddlyWiki
+        run: npm install
+
+      - name: Build static files
+        run: npx tiddlywiki wiki --build
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./wiki/output
+          force_orphan: true</code></pre></div></li><li>将上述内容提交上传至 GitHub</li></ol><h1 class="">注意事项</h1><ol><li><code>$__StoryList.tid</code> 文件的内容应总是保持为：<div><pre><code>list: GettingStarted
+title: $:/StoryList</code></pre></div></li><li><code>$__Import.tid</code> 应总是被忽略</li></ol></div>
+</div></p>
+</section>
+</body>
+</html>
+

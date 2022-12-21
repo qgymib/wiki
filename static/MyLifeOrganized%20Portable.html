@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="generator" content="TiddlyWiki" />
+<meta name="tiddlywiki-version" content="5.2.5" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="format-detection" content="telephone=no">
+<link id="faviconLink" rel="shortcut icon" href="favicon.ico">
+<link rel="stylesheet" href="static.css">
+<title>MyLifeOrganized Portable: 我的 ~TiddlyWiki — 卡片式个人网页笔记</title>
+</head>
+<body class="tc-body">
+
+<section class="tc-story-river tc-static-story-river">
+<p><div class="tc-tiddler-frame tc-tiddler-view-frame tc-tiddler-exists " data-tags="" data-tiddler-title="MyLifeOrganized Portable" role="article"><div class="tc-tiddler-title"><div class="tc-titlebar"><span class="tc-tiddler-controls"><button aria-expanded="false" aria-label="更多" class="tc-btn-invisible tc-btn-%24%3A%2Fcore%2Fui%2FButtons%2Fmore-tiddler-actions" title="更多操作"></button><div class=" tc-reveal" hidden="true"></div><button aria-expanded="false" aria-label="Page TOC" class="tc-btn-invisible tc-btn-%24%3A%2Fplugins%2FGk0Wk%2Fpage-toc%2FPageTOCButton" title="Show TOC of this tiddler"></button><div class="tc-popup-keep tc-reveal" hidden="true"></div><button aria-label="编辑" class="tc-btn-invisible tc-btn-%24%3A%2Fcore%2Fui%2FButtons%2Fedit" title="编辑此条目"></button><button aria-label="关闭" class="tc-btn-invisible tc-btn-%24%3A%2Fcore%2Fui%2FButtons%2Fclose" title="关闭此条目"></button></span><span><h2 class="tc-title">MyLifeOrganized Portable</h2></span></div><div class="tc-tiddler-info tc-popup-handle tc-reveal" hidden="true"></div></div><div class="tc-reveal"></div><div class=" tc-reveal"><div class="tc-subtitle"><a class="tc-tiddlylink tc-tiddlylink-missing" href=".html"></a> 2021年02月22日 01:09</div></div><div class=" tc-reveal"><div class="tc-tags-wrapper"></div></div><div class="tc-tiddler-body tc-reveal"><p>符合 <code>PortableApps.com</code> 格式的 <a class="tc-tiddlylink-external" href="https://www.mylifeorganized.net/" rel="noopener noreferrer" target="_blank">MyLifeOrganized</a> 封装配置。</p><h1 class="">MyLifePrganizedPortable.ini</h1><pre class="hljs"><code class="ini hljs"><span class="hljs-section">[Launch]</span>
+<span class="hljs-attr">ProgramExecutable</span>=MLO\mlo.exe
+<span class="hljs-attr">CommandLineArguments</span>=%PAL:DataDir%\organized.ml
+<span class="hljs-attr">DirectoryMoveOK</span>=<span class="hljs-literal">yes</span>
+<span class="hljs-attr">SupportsUNC</span>=<span class="hljs-literal">yes</span>
+
+<span class="hljs-section">[Activate]</span>
+<span class="hljs-attr">Registry</span>=<span class="hljs-literal">true</span>
+<span class="hljs-attr">XML</span>=<span class="hljs-literal">true</span>
+
+<span class="hljs-section">[Environment]</span>
+<span class="hljs-attr">HOME</span>=%PAL:DataDir%
+
+<span class="hljs-section">[RegistryKeys]</span>
+<span class="hljs-attr">MyLifeOrganized.net</span>=HKCU\Software\MyLifeOrganized.net
+
+<span class="hljs-section">[RegistryCleanupIfEmpty]</span>
+<span class="hljs-attr">1</span>=HKCU\Software\MyLifeOrganized.net
+
+<span class="hljs-section">[DirectoriesMove]</span>
+<span class="hljs-attr">Roaming.MyLifeOrganized</span>=%APPDATA%\MyLifeOrganized
+<span class="hljs-attr">Local.MyLifeOrganized</span>=%LOCALAPPDATA%\MyLifeOrganized
+
+<span class="hljs-section">[FilesMove]</span>
+<span class="hljs-attr">mlo5.keym</span>=%PAL:AppDir%\MLO
+
+<span class="hljs-section">[DirectoriesCleanupIfEmpty]</span>
+<span class="hljs-attr">1</span>=%APPDATA%\MyLifeOrganized
+<span class="hljs-attr">2</span>=%LOCALAPPDATA%\MyLifeOrganized
+
+<span class="hljs-section">[FileWrite1]</span>
+<span class="hljs-attr">Type</span>=Replace
+<span class="hljs-attr">File</span>=%PAL:DataDir%\settings\MyLifeOrganized.net.reg
+<span class="hljs-attr">Find</span>=%PAL:LastDrive%%PAL:LastPackagePartialDir:DoubleBackslash%\\
+<span class="hljs-attr">Replace</span>=%PAL:Drive%%PAL:PackagePartialDir:DoubleBackslash%\\</code></pre><h1 class="">其他</h1><p>将 MyLifeOrganized 的注册文件 <code>mlo5.keym</code> 放在 <code>Data</code> 目录下即可。
+</p></div>
+</div></p>
+</section>
+</body>
+</html>
+
